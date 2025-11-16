@@ -1,0 +1,94 @@
+/* NAVBAR */
+.admin-navbar {
+  width: 100% !important;
+  background: #ad6e00;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  box-sizing: border-box;
+}
+
+/* LOGO */
+.admin-logo {
+  display: flex;
+  align-items: center;
+}
+
+.admin-logo img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+/* DERECHO */
+.admin-right {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.admin-user {
+  font-size: 14px;
+}
+
+/* DROPDOWN */
+.admin-dropdown {
+  position: relative;
+}
+
+.admin-dropdown-btn {
+  background: white;
+  color: black;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid #444;
+  font-size: 14px;
+}
+
+/* MENU VERTICAL */
+.admin-dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 45px;
+  background: white;
+  border-radius: 10px;
+  min-width: 200px;
+  flex-direction: column;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  padding: 5px 0;
+  z-index: 999;
+}
+
+.admin-dropdown-content.show {
+  display: flex !important;
+}
+
+.admin-dropdown-content a,
+.admin-dropdown-content button {
+  padding: 12px 16px;
+  display: block;
+  text-align: left;
+  color: black;
+  background: none;
+  border: none;
+  width: 100%;
+  font-size: 15px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.admin-dropdown-content a:hover,
+.admin-dropdown-content button:hover {
+  background: #f1f1f1;
+}
+
+/* CERRAR SESIÓN */
+.cerrar {
+  color: red !important;
+  font-weight: bold;
+}
