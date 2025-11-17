@@ -1,29 +1,53 @@
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import coldImg from "../img/Logopropio.jpg";
+import "../componentes/HeaderAdmin.css";
+function HeaderAdmin() {
+  const { logout, user } = useAuth();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
 
-const UserPanel = () => {
-    const { user, logout } = useAuth();
-    
-    return (
-    <div className="uk-container uk-margin-top">
-    <h2 className="uk-heading-line uk-text-center">
-        <span>Bienvenido {user?.username}</span>
-    </h2>
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
-    <div className="uk-card uk-card-default uk-card-body uk-width-1-2@m uk-margin-auto">
-        <p><strong>Nombre:</strong> {user?.username}</p>
-        <p><strong>Email:</strong> {user?.email}</p>
-        <p><strong>Teléfono:</strong> {user?.phone}</p>
-        <p><strong>Rol:</strong> {user?.rol}</p>
+  return (
+    <nav className="admin-navbar">
+      {/* LOGO */}
+      <div className="admin-logo">
+        <img src={coldImg} alt="logo" />
+        <span>PaCo</span>
+      </div>
 
-        <button
-        className="uk-button uk-button-danger uk-margin-top"
-        onClick={logout}
-        >
-        Cerrar sesión
-        </button>
-    </div>
-    </div>
-);
-};
+      {/* BIENVENIDA + MENÚ */}
+      <div className="admin-right">
+        <span className="admin-user">
+          Bienvenido, {user?.role || "Administrador"}
+        </span>
 
-export default UserPanel;
+        {/* Botón del menú */}
+        <div className="admin-dropdown">
+          <button className="admin-dropdown-btn" onClick={() => setOpen(!open)}>
+            Menú USER ▾
+          </button>
+
+          {/* MENÚ VERTICAL */}
+          <div className={`admin-dropdown-content ${open ? "show" : ""}`}>
+            <Link to="/view-products">Ver productos</Link>
+            <Link to="/add-product">Agregar productos</Link>
+            <Link to="/add-employee">Agregar empleados</Link>
+            <Link to="/employee-list">Registro de empleados</Link>
+
+            <button className="cerrar" onClick={handleLogout}>
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+export default HeaderAdmin;
