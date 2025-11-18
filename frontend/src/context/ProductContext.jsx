@@ -37,7 +37,13 @@ export const ProductProvider = ({ children }) => {
       const res = await api.post("/products", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      setProducts((prev) => [res.data, ...prev]);
+
+      // ← importante: usar SOLO el newProduct real
+      const newProduct = res.data.newProduct;
+
+      setProducts((prev) => [newProduct, ...prev]);
+      return newProduct;
+
     } catch (error) {
       console.error("Error creating product:", error);
       throw error;
@@ -55,13 +61,22 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  // 🔹 Actualizar producto (con o sin nueva imagen)
+  // 🔹 Actualizar producto
   const updateProduct = async (id, formData) => {
     try {
       const res = await api.put(`/products/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      setProducts((prev) => prev.map((p) => (p._id === id ? res.data : p)));
+
+      // ← importante: solo usar product
+      const updatedProduct = res.data.product;
+
+      setProducts((prev) =>
+        prev.map((p) => (p._id === id ? updatedProduct : p))
+      );
+
+      return updatedProduct;
+
     } catch (error) {
       console.error("Error updating product:", error);
       throw error;

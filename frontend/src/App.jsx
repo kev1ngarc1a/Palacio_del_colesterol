@@ -22,6 +22,8 @@ import EditProduct from "./pages/EditProduct";
 import UserPanel from "./pages/UserPanel";
 import AddEmployee from "./pages/AddEmployee";
 import EmployeeList from "./pages/EmployeeList";
+import ProductDetailUser from "./componentes/ProductDetailUser";
+
 
 function App() {
   return (
@@ -59,6 +61,8 @@ function App() {
             <Route path="/product-list" element={<ProductList />} />
             <Route path="/products/:id" element={<EditProduct />} />
             <Route path="/usuario" element={<UserPanel />} />
+            <Route path="/producto/:id" element={<ProductDetailUser />} />
+
           </Route>
         </Routes>
       </BrowserRouter>

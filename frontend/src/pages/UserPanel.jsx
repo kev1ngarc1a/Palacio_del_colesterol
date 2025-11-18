@@ -3,51 +3,20 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import coldImg from "../img/Logopropio.jpg";
 import "../componentes/HeaderAdmin.css";
-function HeaderAdmin() {
-  const { logout, user } = useAuth();
-  const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+import HeaderUser from "../componentes/HeaderUser";
+import Footer from "../componentes/Footer";
+import ProductList from "../componentes/ProductListUser"; 
+import Tienda from "../componentes/Tienda";
+import ProductListUser from "../componentes/ProductListUser";
 
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-  };
-
-  return (
-    <nav className="admin-navbar">
-      {/* LOGO */}
-      <div className="admin-logo">
-        <img src={coldImg} alt="logo" />
-        <span>PaCo</span>
+export default function UserPanel(){
+  return(
+   <>
+      <div className="page-layout">
+        <main className="content-space">
+        <ProductListUser></ProductListUser>
+        </main>
       </div>
-
-      {/* BIENVENIDA + MENÚ */}
-      <div className="admin-right">
-        <span className="admin-user">
-          Bienvenido, {user?.role || "Administrador"}
-        </span>
-
-        {/* Botón del menú */}
-        <div className="admin-dropdown">
-          <button className="admin-dropdown-btn" onClick={() => setOpen(!open)}>
-            Menú USER ▾
-          </button>
-
-          {/* MENÚ VERTICAL */}
-          <div className={`admin-dropdown-content ${open ? "show" : ""}`}>
-            <Link to="/view-products">Ver productos</Link>
-            <Link to="/add-product">Agregar productos</Link>
-            <Link to="/add-employee">Agregar empleados</Link>
-            <Link to="/employee-list">Registro de empleados</Link>
-
-            <button className="cerrar" onClick={handleLogout}>
-              Cerrar Sesión
-            </button>
-          </div>
-        </div>
-      </div>
-    </nav>
+    </>
   );
 }
-
-export default HeaderAdmin;

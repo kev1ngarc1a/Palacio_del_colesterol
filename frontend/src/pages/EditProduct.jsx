@@ -6,9 +6,9 @@ import HeaderAdmin from "../componentes/HeaderAdmin";
 import Footer from "../componentes/Footer";
 
 export default function EditProduct() {
-  const { id } = useParams(); // ID desde la URL
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { getProduct, updateProduct } = useProducts(); // funciones del contexto
+  const { getProduct, updateProduct } = useProducts();
 
   const [product, setProduct] = useState({
     nombre_producto: "",
@@ -17,20 +17,32 @@ export default function EditProduct() {
     descripcion: "",
   });
 
-  const [preview, setPreview] = useState(null); // vista previa
-  const [newImage, setNewImage] = useState(null); // imagen seleccionada
+  const [preview, setPreview] = useState(null);
+  const [newImage, setNewImage] = useState(null);
 
-  // 🟢 Cargar producto existente
+  // 🔹 Adicionales del producto
+  const [adicionales, setAdicionales] = useState([]);
+
+  // 🔹 Input temporal para nuevo adicional
+  const [newAdicional, setNewAdicional] = useState({
+    nombre: "",
+    precio: "",
+  });
+
+  // 🟢 Cargar producto
   useEffect(() => {
     const loadProduct = async () => {
       const data = await getProduct(id);
       if (data) {
         setProduct({
-          nombre_producto: data.nombre_producto || "",
-          categoria: data.categoria || "",
-          precio: data.precio || "",
-          descripcion: data.descripcion || "",
+          nombre_producto: data.nombre_producto,
+          categoria: data.categoria,
+          precio: data.precio,
+          descripcion: data.descripcion,
         });
+
+        setAdicionales(data.adicionales || []);
+
         if (data.imagen) {
           setPreview(`http://localhost:5000${data.imagen}`);
         }
@@ -39,112 +51,117 @@ export default function EditProduct() {
     loadProduct();
   }, [id, getProduct]);
 
-  // 🟢 Manejar cambios en campos
+  // 🟢 Manejo de cambios
   const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
-  // 🟢 Manejar cambio de imagen
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setNewImage(file);
-    if (file) {
-      setPreview(URL.createObjectURL(file));
-    }
+    if (file) setPreview(URL.createObjectURL(file));
   };
 
-  // 🟢 Enviar formulario con FormData
+  // 🔹 Agregar adicional
+  const addAdicional = () => {
+    if (!newAdicional.nombre || !newAdicional.precio) return;
+
+    setAdicionales([...adicionales, newAdicional]);
+    setNewAdicional({ nombre: "", precio: "" });
+  };
+
+  // 🔹 Eliminar adicional
+  const removeAdicional = (index) => {
+    setAdicionales(adicionales.filter((_, i) => i !== index));
+  };
+
+  // 🟢 Enviar cambios
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const formData = new FormData();
-      formData.append("nombre_producto", product.nombre_producto);
-      formData.append("categoria", product.categoria);
-      formData.append("precio", product.precio);
-      formData.append("descripcion", product.descripcion);
-      if (newImage) {
-        formData.append("imagen", newImage);
-      }
 
-      await updateProduct(id, formData);
-      navigate("/product-list");
-    } catch (error) {
-      console.error("Error al actualizar producto:", error);
-    }
+    const formData = new FormData();
+    formData.append("nombre_producto", product.nombre_producto);
+    formData.append("categoria", product.categoria);
+    formData.append("precio", product.precio);
+    formData.append("descripcion", product.descripcion);
+
+    // 🔹 Enviar adicionales como JSON
+    formData.append("adicionales", JSON.stringify(adicionales));
+
+    if (newImage) formData.append("imagen", newImage);
+
+    await updateProduct(id, formData);
+
+    navigate("/product-list");
   };
 
   return (
     <>
       <HeaderAdmin />
+
       <div className="edit-container">
         <h1 className="edit-title">Editar Producto</h1>
 
-        <form
-          className="edit-form"
-          onSubmit={handleSubmit}
-          encType="multipart/form-data"
-        >
-          {/* 🖼️ Imagen actual o nueva */}
-          <label htmlFor="imagen">Imagen del Producto</label>
+        <form className="edit-form" onSubmit={handleSubmit} encType="multipart/form-data">
+
+          {/* IMAGEN */}
+          <label>Imagen del Producto</label>
           <input type="file" accept="image/*" onChange={handleImageChange} />
 
-          {preview && (
-            <div className="preview-container">
-              <img
-                src={preview}
-                alt="Vista previa"
-                className="imagen-preview"
-              />
-            </div>
-          )}
+          {preview && <img src={preview} className="imagen-preview" alt="Preview" />}
 
+          {/* CAMPOS BÁSICOS */}
           <label>Nombre del producto</label>
-          <input
-            type="text"
-            name="nombre_producto"
-            value={product.nombre_producto}
-            onChange={handleChange}
-            required
-          />
+          <input name="nombre_producto" value={product.nombre_producto} onChange={handleChange} required />
 
           <label>Categoría</label>
-          <input
-            type="text"
-            name="categoria"
-            value={product.categoria}
-            onChange={handleChange}
-          />
+          <input name="categoria" value={product.categoria} onChange={handleChange} />
 
           <label>Precio</label>
-          <input
-            type="number"
-            name="precio"
-            value={product.precio}
-            onChange={handleChange}
-            required
-          />
+          <input type="number" name="precio" value={product.precio} onChange={handleChange} required />
 
           <label>Descripción</label>
-          <textarea
-            name="descripcion"
-            value={product.descripcion}
-            onChange={handleChange}
-          />
+          <textarea name="descripcion" value={product.descripcion} onChange={handleChange} />
 
-          <div className="edit-buttons">
-            <button type="submit" className="btn-save">
-              Guardar cambios
-            </button>
-            <button
-              type="button"
-              className="btn-cancel"
-              onClick={() => navigate("/product-list")}
-            >
-              Cancelar
-            </button>
+          {/* 🔹 ADICIONALES */}
+          <h3>Adicionales</h3>
+
+          <div className="adicional-inputs">
+            <input
+              type="text"
+              placeholder="Nombre del adicional"
+              value={newAdicional.nombre}
+              onChange={(e) => setNewAdicional({ ...newAdicional, nombre: e.target.value })}
+            />
+
+            <input
+              type="number"
+              placeholder="Precio"
+              value={newAdicional.precio}
+              onChange={(e) => setNewAdicional({ ...newAdicional, precio: Number(e.target.value) })}
+            />
+
+            <button type="button" onClick={addAdicional} className="btn-add">Agregar</button>
           </div>
+
+          <ul className="adicional-lista">
+            {adicionales.map((a, index) => (
+              <li key={index} className="adicional-item">
+                {a.nombre} — ${a.precio}
+                <button type="button" onClick={() => removeAdicional(index)} className="btn-delete">X</button>
+              </li>
+            ))}
+          </ul>
+
+          {/* BOTONES */}
+          <div className="edit-buttons">
+            <button type="submit" className="btn-save">Guardar cambios</button>
+            <button type="button" className="btn-cancel" onClick={() => navigate("/product-list")}>Cancelar</button>
+          </div>
+
         </form>
       </div>
+
       <Footer />
     </>
   );

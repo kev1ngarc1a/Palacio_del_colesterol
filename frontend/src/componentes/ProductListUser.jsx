@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { useProducts } from "../context/ProductContext";
-import ProductCard from "../componentes/ProductCard";
-import HeaderAdmin from "../componentes/HeaderAdmin";
+import ProductCardUser from "../componentes/ProductCardUser";
+import HeaderUser from "../componentes/HeaderUser";
 import Footer from "../componentes/Footer";
 
-function ProductList() {
+function ProductListUser() {
   const { products, loadProducts, loading } = useProducts();
 
   useEffect(() => {
@@ -13,18 +13,11 @@ function ProductList() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fff7e6] text-gray-800">
-      {/* 🔹 Header del administrador */}
-      <HeaderAdmin />
-      <div className="uk-flex uk-flex-center uk-margin">
-       <a
-        href="/add-product"
-       className="uk-button uk-button-warning uk-border-rounded"
-        style={{ fontWeight: "bold" }}
-       >
-       ➕ Agregar Producto NUEVO
-       </a>
-</div>
-      {/* 🔹 Contenido principal */}
+
+      {/* Header usuario */}
+      <HeaderUser />
+
+      {/* Contenido principal */}
       <main className="flex-grow p-8">
         {loading ? (
           <p className="text-center text-gray-500 py-10 text-lg">
@@ -37,16 +30,16 @@ function ProductList() {
         ) : (
           <div className="product-list">
             {products.map((product) => (
-              <ProductCard key={product._id} product={product} />
+              <ProductCardUser key={product._id} product={product} />
             ))}
           </div>
         )}
       </main>
 
-      {/* 🔹 Footer */}
+      {/* Footer */}
       <Footer />
     </div>
   );
 }
 
-export default ProductList;
+export default ProductListUser;

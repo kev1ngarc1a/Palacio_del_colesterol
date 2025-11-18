@@ -1,7 +1,7 @@
 /* Hace que la página ocupe toda la altura de la ventana */
 html,
 body {
-  height: 100%;
+  height: auto;
   margin: 0;
   padding: 0;
 }
@@ -9,7 +9,7 @@ body {
 .page-layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: auto;
 }
 
 .content-space {

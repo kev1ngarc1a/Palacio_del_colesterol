@@ -8,7 +8,6 @@ export default function Navbar() {
       <div className="page-layout">
         <HeaderAdmin />
         <main className="content-space"></main>
-        <Footer />
       </div>
     </>
   );

@@ -14,11 +14,14 @@ function ProductCard({ product }) {
   const handleEdit = (id) => {
     navigate(`/products/${id}`);
   };
+
   const imageUrl = product.imagen
     ? `http://localhost:5000${product.imagen}`
     : "https://via.placeholder.com/200x200?text=Sin+imagen";
+
   return (
     <div className="product-card">
+      {/* Imagen */}
       <div className="image-container">
         <img
           src={imageUrl}
@@ -26,18 +29,46 @@ function ProductCard({ product }) {
           className="product-image"
         />
       </div>
+
+      {/* Nombre */}
       <h2 className="product-name">{product.nombre_producto}</h2>
 
+      {/* Categoría */}
       <p>
         <strong>Categoría:</strong> {product.categoria || "Sin categoría"}
       </p>
+
+      {/* Precio */}
       <p>
         <strong>Precio:</strong> ${product.precio?.toLocaleString("es-CO")}
       </p>
+
+      {/* Descripción */}
       <p>
-        <strong>Descripción:</strong> {product.descripcion || "Sin descripción"}
+        <strong>Descripción:</strong>{" "}
+        {product.descripcion || "Sin descripción"}
       </p>
 
+      {/* 🔹 ADICIONALES (SECCIÓN NUEVA) */}
+      {product.adicionales && product.adicionales.length > 0 ? (
+        <div className="adicionales-box">
+          <p><strong>Adicionales:</strong></p>
+
+          <ul className="adicionales-list">
+            {product.adicionales.map((a, index) => (
+              <li key={index} className="adicional-item">
+                • {a.nombre} — ${a.precio.toLocaleString("es-CO")}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <p>
+          <strong>Adicionales:</strong> Ninguno
+        </p>
+      )}
+
+      {/* Botones */}
       <div className="button-container">
         <button
           className="btn-delete"
@@ -45,7 +76,11 @@ function ProductCard({ product }) {
         >
           Eliminar
         </button>
-        <button className="btn-edit" onClick={() => handleEdit(product._id)}>
+
+        <button
+          className="btn-edit"
+          onClick={() => handleEdit(product._id)}
+        >
           Editar
         </button>
       </div>

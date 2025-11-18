@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import coldImg from "../img/Logopropio.jpg";
 import "./HeaderAdmin.css";
 
-function HeaderAdmin() {
+function HeaderUser() {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -25,33 +25,18 @@ function HeaderAdmin() {
       {/* BIENVENIDA + MENÚ */}
       <div className="admin-right">
         <span className="admin-user">
-          Bienvenido, {user?.role || "Administrador"}
+          Bienvenido, {user?.role || "Usuario"}
         </span>
-
-{/* boton admin y funcion para que aparezca si está en la raiz admin */}
-    {location.pathname !== "/admin" && (
-     <div className="admin-right">
-       <a 
-      href="/admin" 
-      className="uk-button uk-button-secondary uk-border-rounded">
-      ⟵ Regresar al Panel Principal
-      </a>
-    </div>
-)}
-
-  
 
         {/* Botón del menú */}
         <div className="admin-dropdown">
           <button className="admin-dropdown-btn" onClick={() => setOpen(!open)}>
-            Menú Admin ▾
+            Menú Usuario ▾
           </button>
           {/* MENÚ VERTICAL */}
           <div className={`admin-dropdown-content ${open ? "show" : ""}`}>
-            <Link to="/view-products">Ver productos</Link>
-            <Link to="/add-product">Agregar productos</Link>
-            <Link to="/add-employee">Agregar empleados</Link>
-            <Link to="/employee-list">Registro de empleados</Link>
+        
+          
 
             <button className="cerrar" onClick={handleLogout}>
               Cerrar Sesión
@@ -63,4 +48,4 @@ function HeaderAdmin() {
   );
 }
 
-export default HeaderAdmin;
+export default HeaderUser;

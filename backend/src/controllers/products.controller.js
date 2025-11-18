@@ -24,14 +24,27 @@ export const getProductById = async (req, res) => {
   }
 };
 
-// 🟢 Crear un nuevo producto (con imagen)
+// 🟢 Crear producto
 export const createProduct = async (req, res) => {
   try {
+    // 🔥 LOGS CORRECTOS AQUÍ
+    console.log("BODY:", req.body);
+    console.log("ADICIONALES RAW:", req.body.adicionales);
+
     const { nombre_producto, categoria, descripcion, precio } = req.body;
+
+    // Procesar adicionales
+    let adicionales = [];
+    if (req.body.adicionales) {
+      try {
+        adicionales = JSON.parse(req.body.adicionales);
+      } catch (err) {
+        console.error("❌ Error al parsear adicionales:", err);
+      }
+    }
 
     let imagen = null;
     if (req.file) {
-      // Guardamos la ruta relativa de la imagen
       imagen = `/uploads/${req.file.filename}`;
     }
 
@@ -41,41 +54,53 @@ export const createProduct = async (req, res) => {
       descripcion,
       precio,
       imagen,
+      adicionales,
       creadoPor: req.user?.id || null,
     });
 
     await newProduct.save();
-    res
-      .status(201)
-      .json({ message: "Producto creado exitosamente", newProduct });
+    return res.status(201).json(newProduct);
+
   } catch (error) {
-    console.error(error);
+    console.error("❌ ERROR CREATE PRODUCT:", error);
     res.status(500).json({ message: "Error al crear producto", error });
   }
 };
 
-// 🟢 Actualizar un producto (imagen opcional)
+// 🟢 Actualizar producto
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
+
+    // 🔥 LOGS CORRECTOS AQUÍ
+    console.log("BODY UPDATE:", req.body);
+    console.log("ADICIONALES UPDATE RAW:", req.body.adicionales);
+
     const { nombre_producto, categoria, descripcion, precio } = req.body;
 
     const product = await Product.findById(id);
     if (!product)
       return res.status(404).json({ message: "Producto no encontrado" });
 
-    // Si se subió una nueva imagen, eliminamos la anterior
+    // Procesar adicionales
+    if (req.body.adicionales) {
+      try {
+        product.adicionales = JSON.parse(req.body.adicionales);
+      } catch (err) {
+        console.error("❌ Error al parsear adicionales:", err);
+      }
+    }
+
+    // Imagen
     if (req.file) {
       if (product.imagen) {
         const oldImagePath = path.join(process.cwd(), product.imagen);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath); // elimina la imagen anterior
-        }
+        if (fs.existsSync(oldImagePath)) fs.unlinkSync(oldImagePath);
       }
       product.imagen = `/uploads/${req.file.filename}`;
     }
 
-    // Actualizamos los demás campos
+    // Campos normales
     product.nombre_producto = nombre_producto || product.nombre_producto;
     product.categoria = categoria || product.categoria;
     product.descripcion = descripcion || product.descripcion;
@@ -83,24 +108,25 @@ export const updateProduct = async (req, res) => {
 
     await product.save();
     res.json({ message: "Producto actualizado correctamente", product });
+
   } catch (error) {
+    console.error("❌ ERROR UPDATE:", error);
     res.status(500).json({ message: "Error al actualizar producto", error });
   }
 };
 
-// 🟢 Eliminar un producto
+// 🟢 Eliminar producto
 export const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
+
     if (!product)
       return res.status(404).json({ message: "Producto no encontrado" });
 
-    // Eliminar la imagen del servidor si existe
+    // Eliminar imagen
     if (product.imagen) {
       const imagePath = path.join(process.cwd(), product.imagen);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-      }
+      if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
     }
 
     res.json({ message: "Producto eliminado correctamente" });
